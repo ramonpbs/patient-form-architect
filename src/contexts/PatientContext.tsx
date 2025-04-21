@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { createEmptyPatient, Patient } from '@/models/patient';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,40 +15,29 @@ interface PatientContextType {
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
 export function PatientProvider({ children }: { children: ReactNode }) {
-  const [patient, setPatient] = useState<Patient>(createEmptyPatient);
+  const [patient, setPatient] = useState<Patient>(createEmptyPatient());
   const [loading, setLoading] = useState(false);
   const [currentSection, setCurrentSection] = useState('identification');
   const { toast } = useToast();
 
-  // Update a specific section of the patient data
   const updatePatient = (sectionKey: string, sectionData: any) => {
     setPatient((prev) => {
-      // Create a new patient object with updated data for specified section
       const newPatient = { ...prev, [sectionKey]: { ...prev[sectionKey as keyof Patient], ...sectionData } };
-      
-      // Also update the updatedAt timestamp
       newPatient.updatedAt = new Date().toISOString();
-      
-      // Save to localStorage for persistence
       localStorage.setItem('currentPatient', JSON.stringify(newPatient));
-      
       return newPatient;
     });
   };
 
-  // Save the patient data (currently just to localStorage)
   const savePatient = async () => {
     try {
       setLoading(true);
-      // In a real application, this would save to a database
       localStorage.setItem('savedPatients', JSON.stringify([...(JSON.parse(localStorage.getItem('savedPatients') || '[]')), patient]));
-      
       toast({
         title: "Paciente salvo com sucesso",
         description: "Os dados foram salvos localmente.",
         variant: "default",
       });
-      
       return Promise.resolve();
     } catch (error) {
       toast({
@@ -63,7 +51,6 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Reset the form to empty state
   const resetForm = () => {
     setPatient(createEmptyPatient());
     localStorage.removeItem('currentPatient');
