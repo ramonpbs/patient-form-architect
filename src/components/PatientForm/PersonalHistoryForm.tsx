@@ -1,281 +1,359 @@
 
 import { useState } from "react";
 import FormSection from "./FormSection";
-import { FileText } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 import { usePatient } from "@/contexts/PatientContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export function PersonalHistoryForm() {
   const { patient, updatePatient } = usePatient();
   const [isOpen, setIsOpen] = useState(true);
-  const personal = patient.personalHistory;
+  const values = patient.personalHistory;
 
-  // Funções helper focadas só no necessário da imagem
-  const handleField = (field: keyof typeof personal, value: any) => {
-    updatePatient("personalHistory", { [field]: value });
-  };
-  const handleChronicField = (field: keyof typeof personal.chronicDiseases, value: boolean | string) => {
+  // Boolean radio helpers
+  const yesNoItems = [
+    { label: "Sim", value: "true" },
+    { label: "Não", value: "false" },
+  ];
+
+  function handleCheckboxChange(key: keyof typeof values.chronicDiseases) {
     updatePatient("personalHistory", {
-      chronicDiseases: { ...personal.chronicDiseases, [field]: value }
+      chronicDiseases: {
+        ...values.chronicDiseases,
+        [key]: !values.chronicDiseases[key],
+      },
     });
-  };
+  }
 
   return (
     <FormSection
       title="ANTECEDENTES PESSOAIS"
-      icon={<FileText className="h-5 w-5" />}
+      icon={<HeartPulse className="h-5 w-5" />}
       isOpen={isOpen}
       onToggle={() => setIsOpen(!isOpen)}
     >
-      <form className="space-y-5">
-
-        {/* Doenças crônicas */}
-        <div>
-          <Label className="block font-semibold mb-2">Doenças crônicas:</Label>
-          <div className="flex flex-wrap gap-4">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.diabetes} onCheckedChange={v => handleChronicField("diabetes", !!v)} />
-              DM
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.hypertension} onCheckedChange={v => handleChronicField("hypertension", !!v)} />
-              HAS
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.kidneyFailure} onCheckedChange={v => handleChronicField("kidneyFailure", !!v)} />
-              IRC
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.cancer} onCheckedChange={v => handleChronicField("cancer", !!v)} />
-              Neoplasias
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.obesity} onCheckedChange={v => handleChronicField("obesity", !!v)} />
-              Obesidade
-            </Label>
-          </div>
+      {/* Doenças crônicas */}
+      <div>
+        <Label className="block mb-2 font-semibold">Doenças crônicas:</Label>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <label className="flex items-center gap-2">
+            <Checkbox
+              checked={values.chronicDiseases.diabetes}
+              onCheckedChange={() => handleCheckboxChange("diabetes")}
+            />
+            DM
+          </label>
+          <label className="flex items-center gap-2">
+            <Checkbox
+              checked={values.chronicDiseases.hypertension}
+              onCheckedChange={() => handleCheckboxChange("hypertension")}
+            />
+            HAS
+          </label>
+          <label className="flex items-center gap-2">
+            <Checkbox
+              checked={values.chronicDiseases.kidneyFailure}
+              onCheckedChange={() => handleCheckboxChange("kidneyFailure")}
+            />
+            IRC
+          </label>
+          <label className="flex items-center gap-2">
+            <Checkbox
+              checked={values.chronicDiseases.cancer}
+              onCheckedChange={() => handleCheckboxChange("cancer")}
+            />
+            Neoplasias
+          </label>
+          <label className="flex items-center gap-2">
+            <Checkbox
+              checked={values.chronicDiseases.obesity}
+              onCheckedChange={() => handleCheckboxChange("obesity")}
+            />
+            Obesidade
+          </label>
         </div>
+      </div>
 
-        {/* Doenças Respiratórias, Cardiopatias, Outras */}
-        <div className="grid md:grid-cols-3 gap-3">
-          <div>
-            <Label className="block mb-1">Doenças Respiratórias:</Label>
-            <Checkbox checked={personal.chronicDiseases.respiratoryDiseases} onCheckedChange={v => handleChronicField('respiratoryDiseases', !!v)} />{" "}
-            <Input
-              placeholder="Quais?"
-              className="w-full mt-1"
-              value={personal.chronicDiseases.respiratoryDescription}
-              onChange={e => handleChronicField('respiratoryDescription', e.target.value)}
-              disabled={!personal.chronicDiseases.respiratoryDiseases}
-            />
-          </div>
-          <div>
-            <Label className="block mb-1">Cardiopatias:</Label>
-            <Checkbox checked={personal.chronicDiseases.heartDiseases} onCheckedChange={v => handleChronicField('heartDiseases', !!v)} />{" "}
-            <Input
-              placeholder="Quais?"
-              className="w-full mt-1"
-              value={personal.chronicDiseases.heartDescription}
-              onChange={e => handleChronicField('heartDescription', e.target.value)}
-              disabled={!personal.chronicDiseases.heartDiseases}
-            />
-          </div>
-          <div>
-            <Label className="block mb-1">Outras:</Label>
-            <Checkbox checked={personal.chronicDiseases.other} onCheckedChange={v => handleChronicField('other', !!v)} />{" "}
-            <Input
-              placeholder="Descreva"
-              className="w-full mt-1"
-              value={personal.chronicDiseases.otherDescription}
-              onChange={e => handleChronicField('otherDescription', e.target.value)}
-              disabled={!personal.chronicDiseases.other}
-            />
-          </div>
+      {/* Doenças Respiratórias */}
+      <div className="mt-4">
+        <Label className="font-semibold">Doenças Respiratórias:</Label>
+        <div className="flex items-center gap-2 mt-1">
+          <Checkbox
+            checked={values.chronicDiseases.respiratoryDiseases}
+            onCheckedChange={() => handleCheckboxChange("respiratoryDiseases")}
+          />
+          <Input
+            type="text"
+            className="w-72"
+            placeholder="Descreva"
+            value={values.chronicDiseases.respiratoryDescription}
+            onChange={(e) =>
+              updatePatient("personalHistory", {
+                chronicDiseases: {
+                  ...values.chronicDiseases,
+                  respiratoryDiseases: true,
+                  respiratoryDescription: e.target.value,
+                },
+              })
+            }
+          />
         </div>
-
-        {/* Internações anteriores */}
-        <div>
-          <Label className="block mb-1">Internações anteriores:</Label>
-          <div className="flex items-center gap-4">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={!personal.previousHospitalizations} onCheckedChange={v => handleField('previousHospitalizations', !v)} />
-              Não
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.previousHospitalizations} onCheckedChange={v => handleField('previousHospitalizations', !!v)} />
-              Sim
-            </Label>
+      </div>
+      {/* Internações anteriores */}
+      <div className="mt-4">
+        <Label className="font-semibold">Internações anteriores:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.previousHospitalizations ? "true" : "false"}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { previousHospitalizations: val === "true" })
+          }
+        >
+          {yesNoItems.map((item) => (
+            <label key={item.value} className="flex items-center gap-2">
+              <RadioGroupItem value={item.value} />
+              {item.label}
+            </label>
+          ))}
+        </RadioGroup>
+        {values.previousHospitalizations && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <Input
               placeholder="Motivo"
-              className="w-32"
-              value={personal.hospitalizationReason}
-              onChange={e => handleField('hospitalizationReason', e.target.value)}
-              disabled={!personal.previousHospitalizations}
+              value={values.hospitalizationReason}
+              onChange={(e) =>
+                updatePatient("personalHistory", { hospitalizationReason: e.target.value })
+              }
             />
             <Input
               placeholder="Quando"
-              type="text"
-              className="w-24"
-              value={personal.hospitalizationDate}
-              onChange={e => handleField('hospitalizationDate', e.target.value)}
-              disabled={!personal.previousHospitalizations}
+              value={values.hospitalizationDate}
+              onChange={(e) =>
+                updatePatient("personalHistory", { hospitalizationDate: e.target.value })
+              }
             />
           </div>
-        </div>
-
-        {/* Cirurgias anteriores */}
-        <div>
-          <Label className="block mb-1">Cirurgias anteriores:</Label>
-          <div className="flex items-center gap-4">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={!personal.previousSurgeries} onCheckedChange={v => handleField('previousSurgeries', !v)} />
-              Não
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.previousSurgeries} onCheckedChange={v => handleField('previousSurgeries', !!v)} />
-              Sim
-            </Label>
+        )}
+      </div>
+      {/* Cardiopatias */}
+      <div className="mt-4">
+        <Label className="font-semibold">Cardiopatias:</Label>
+        <Input
+          type="text"
+          placeholder="Descreva"
+          value={values.chronicDiseases.heartDiseases ? values.chronicDiseases.heartDescription : ""}
+          onChange={(e) =>
+            updatePatient("personalHistory", {
+              chronicDiseases: {
+                ...values.chronicDiseases,
+                heartDiseases: true,
+                heartDescription: e.target.value,
+              },
+            })
+          }
+        />
+      </div>
+      {/* Outras */}
+      <div className="mt-4">
+        <Label className="font-semibold">Outras:</Label>
+        <Input
+          type="text"
+          placeholder="Descreva"
+          value={values.chronicDiseases.other ? values.chronicDiseases.otherDescription : ""}
+          onChange={(e) =>
+            updatePatient("personalHistory", {
+              chronicDiseases: {
+                ...values.chronicDiseases,
+                other: true,
+                otherDescription: e.target.value,
+              },
+            })
+          }
+        />
+      </div>
+      {/* Cirurgias anteriores */}
+      <div className="mt-4">
+        <Label className="font-semibold">Cirurgias anteriores:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.previousSurgeries ? "true" : "false"}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { previousSurgeries: val === "true" })
+          }
+        >
+          {yesNoItems.map((item) => (
+            <label key={item.value} className="flex items-center gap-2">
+              <RadioGroupItem value={item.value} />
+              {item.label}
+            </label>
+          ))}
+        </RadioGroup>
+        {values.previousSurgeries && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <Input
               placeholder="Motivo"
-              className="w-32"
-              value={personal.surgeryReason}
-              onChange={e => handleField('surgeryReason', e.target.value)}
-              disabled={!personal.previousSurgeries}
+              value={values.surgeryReason}
+              onChange={(e) =>
+                updatePatient("personalHistory", { surgeryReason: e.target.value })
+              }
             />
             <Input
               placeholder="Quando"
-              type="text"
-              className="w-24"
-              value={personal.surgeryDate}
-              onChange={e => handleField('surgeryDate', e.target.value)}
-              disabled={!personal.previousSurgeries}
+              value={values.surgeryDate}
+              onChange={(e) =>
+                updatePatient("personalHistory", { surgeryDate: e.target.value })
+              }
             />
           </div>
-        </div>
-
-        {/* Alergias */}
-        <div>
-          <Label className="block mb-1">Alergias:</Label>
-          <div className="flex items-center gap-4">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={!personal.allergies} onCheckedChange={v => handleField('allergies', !v)} />
-              Não
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.allergies} onCheckedChange={v => handleField('allergies', !!v)} />
-              Sim
-            </Label>
+        )}
+      </div>
+      {/* Alergias */}
+      <div className="mt-4">
+        <Label className="font-semibold">Alergias:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.allergies ? "true" : "false"}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { allergies: val === "true" })
+          }
+        >
+          {yesNoItems.map((item) => (
+            <label key={item.value} className="flex items-center gap-2">
+              <RadioGroupItem value={item.value} />
+              {item.label}
+            </label>
+          ))}
+        </RadioGroup>
+        {values.allergies && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <Input
               placeholder="Alergeno"
-              className="w-32"
-              value={personal.allergen}
-              onChange={e => handleField('allergen', e.target.value)}
-              disabled={!personal.allergies}
+              value={values.allergen}
+              onChange={(e) =>
+                updatePatient("personalHistory", { allergen: e.target.value })
+              }
             />
             <Input
               placeholder="Manifestações"
-              className="w-36"
-              value={personal.allergyManifestations}
-              onChange={e => handleField('allergyManifestations', e.target.value)}
-              disabled={!personal.allergies}
+              value={values.allergyManifestations}
+              onChange={(e) =>
+                updatePatient("personalHistory", { allergyManifestations: e.target.value })
+              }
             />
           </div>
-        </div>
-
-        {/* Ciclo Menstrual */}
-        <div className="flex flex-row gap-6 items-end">
-          <div>
-            <Label className="block mb-1">Ciclo Menstrual:</Label>
-            <div className="flex items-center gap-2">
-              <Label className="flex items-center gap-1">
-                <Checkbox
-                  checked={personal.menstrualCycle === "Regular"}
-                  onCheckedChange={() => handleField("menstrualCycle", "Regular")}
-                />
-                Regular
-              </Label>
-              <Label className="flex items-center gap-1">
-                <Checkbox
-                  checked={personal.menstrualCycle === "Irregular"}
-                  onCheckedChange={() => handleField("menstrualCycle", "Irregular")}
-                />
-                Irregular
-              </Label>
-            </div>
-          </div>
-          <div>
-            <Label className="block mb-1">Obs.:</Label>
-            <Input
-              className="w-36"
-              placeholder="Observações"
-              value={personal.menstrualObservations}
-              onChange={e => handleField('menstrualObservations', e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Uso de medicamentos */}
-        <div>
-          <Label className="block mb-1">Uso de medicamentos:</Label>
-          <div className="flex items-center gap-3 mb-2">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={!personal.medicationUse} onCheckedChange={v => handleField('medicationUse', !v)} />
-              Não
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.medicationUse} onCheckedChange={v => handleField('medicationUse', !!v)} />
-              Sim
-            </Label>
+        )}
+      </div>
+      {/* Ciclo Menstrual */}
+      <div className="mt-4">
+        <Label className="font-semibold">Ciclo Menstrual:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.menstrualCycle}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { menstrualCycle: val as "Regular" | "Irregular" | "" })
+          }
+        >
+          <label className="flex items-center gap-2">
+            <RadioGroupItem value="Regular" />
+            Regular
+          </label>
+          <label className="flex items-center gap-2">
+            <RadioGroupItem value="Irregular" />
+            Irregular
+          </label>
+        </RadioGroup>
+        <Input
+          className="mt-2"
+          placeholder="Observações"
+          value={values.menstrualObservations}
+          onChange={(e) =>
+            updatePatient("personalHistory", { menstrualObservations: e.target.value })
+          }
+        />
+      </div>
+      {/* Uso de medicamentos */}
+      <div className="mt-4">
+        <Label className="font-semibold">Uso de medicamentos:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.medicationUse ? "true" : "false"}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { medicationUse: val === "true" })
+          }
+        >
+          {yesNoItems.map((item) => (
+            <label key={item.value} className="flex items-center gap-2">
+              <RadioGroupItem value={item.value} />
+              {item.label}
+            </label>
+          ))}
+        </RadioGroup>
+        {values.medicationUse && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <Input
               placeholder="Quais"
-              className="w-32"
-              value={personal.medications}
-              onChange={e => handleField('medications', e.target.value)}
-              disabled={!personal.medicationUse}
+              value={values.medications}
+              onChange={(e) =>
+                updatePatient("personalHistory", { medications: e.target.value })
+              }
             />
             <Input
-              placeholder="Há quanto tempo?"
-              className="w-36"
-              value={personal.medicationTime}
-              onChange={e => handleField('medicationTime', e.target.value)}
-              disabled={!personal.medicationUse}
+              placeholder="Há quanto tempo"
+              value={values.medicationTime}
+              onChange={(e) =>
+                updatePatient("personalHistory", { medicationTime: e.target.value })
+              }
             />
           </div>
-        </div>
-
-        {/* Esquema vacinal */}
-        <div>
-          <Label className="block mb-1">Esquema vacinal:</Label>
-          <div className="flex items-center gap-3">
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={!personal.vaccineSchedule} onCheckedChange={v => handleField('vaccineSchedule', !v)} />
-              Não
-            </Label>
-            <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.vaccineSchedule} onCheckedChange={v => handleField('vaccineSchedule', !!v)} />
-              Sim
-            </Label>
-            <Label className="ml-6 flex items-center gap-2">
-              Adequado para a idade:
-              <Checkbox checked={personal.ageAppropriateVaccines} onCheckedChange={v => handleField('ageAppropriateVaccines', !!v)} />
-              Sim
-              <Checkbox checked={!personal.ageAppropriateVaccines} onCheckedChange={v => handleField('ageAppropriateVaccines', !v)} />
-              Não
-            </Label>
-          </div>
-        </div>
-        {/* Observação final */}
-        <div>
-          <Label className="block">Obs.:</Label>
-          <Input
-            placeholder="Observações gerais"
-            value={personal.observations}
-            onChange={e => handleField('observations', e.target.value)}
+        )}
+      </div>
+      {/* Esquema vacinal */}
+      <div className="mt-4">
+        <Label className="font-semibold">Esquema vacinal:</Label>
+        <RadioGroup
+          className="flex flex-row gap-6 mt-1"
+          value={values.vaccineSchedule ? "true" : "false"}
+          onValueChange={(val) =>
+            updatePatient("personalHistory", { vaccineSchedule: val === "true" })
+          }
+        >
+          {yesNoItems.map((item) => (
+            <label key={item.value} className="flex items-center gap-2">
+              <RadioGroupItem value={item.value} />
+              {item.label}
+            </label>
+          ))}
+        </RadioGroup>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+          <Label>Adequado para idade:</Label>
+          <RadioGroup
+            className="flex flex-row gap-6"
+            value={values.ageAppropriateVaccines ? "true" : "false"}
+            onValueChange={(val) =>
+              updatePatient("personalHistory", { ageAppropriateVaccines: val === "true" })
+            }
+          >
+            {yesNoItems.map((item) => (
+              <label key={item.value} className="flex items-center gap-2">
+                <RadioGroupItem value={item.value} />
+                {item.label}
+              </label>
+            ))}
+          </RadioGroup>
+          <Textarea
+            className="col-span-2"
+            placeholder="Observações"
+            value={values.observations}
+            onChange={(e) =>
+              updatePatient("personalHistory", { observations: e.target.value })
+            }
           />
         </div>
-      </form>
+      </div>
     </FormSection>
   );
 }
