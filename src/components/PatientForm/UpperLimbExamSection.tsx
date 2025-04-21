@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +12,8 @@ export function UpperLimbExamSection({
   return (
     <section className="space-y-4">
       <h3 className="font-semibold text-lg">Membros Superiores</h3>
-      {/* MSD */}
+
+      {/* MSD (Direito) */}
       <div>
         <h4 className="font-semibold">MSD (Direito)</h4>
         <div className="flex flex-wrap gap-3 items-center">
@@ -155,12 +155,72 @@ export function UpperLimbExamSection({
           </div>
         </div>
       </div>
-      {/* MSE */}
+
+      {/* MSE (Esquerdo) */}
       <div>
         <h4 className="font-semibold">MSE (Esquerdo)</h4>
-        {/* Repetir a estrutura acima - depende de como os dados estão estruturados */}
-        {/* Por simplicidade, utilize os mesmos inputs acima para o lado esquerdo passados por props diferentes, caso necessário */}
-        {/* Implemente conforme o padrão do projeto para não perder conexão com o contexto */}
+        <div className="flex flex-wrap gap-3 items-center">
+          <Label>Inspeção:</Label>
+          {["hematoma", "ecchymosis", "perfusion", "hemorrhage"].map(k => (
+            <div key={k} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={!!upperLimbs.inspection[k]}
+                onChange={e =>
+                  handleUpperLimbChange("left", "inspection", {
+                    ...upperLimbs.inspection,
+                    [k]: e.target.checked,
+                  })
+                }
+              />
+              <span className="ml-1 capitalize">
+                {k === "ecchymosis" ? "Equimoses" : k.charAt(0).toUpperCase() + k.slice(1)}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-3 items-center">
+          <Label>Palpação:</Label>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={!!upperLimbs.palpation.pain}
+              onChange={e =>
+                handleUpperLimbChange("left", "palpation", {
+                  ...upperLimbs.palpation,
+                  pain: e.target.checked,
+                })
+              }
+            />
+            <span className="ml-1">Dor</span>
+          </div>
+          <div className="flex flex-col">
+            <Input
+              className="w-28"
+              placeholder="Local da dor"
+              value={upperLimbs.palpation.painLocation}
+              onChange={e =>
+                handleUpperLimbChange("left", "palpation", {
+                  ...upperLimbs.palpation,
+                  painLocation: e.target.value,
+                })
+              }
+            />
+          </div>
+          <div className="flex flex-col">
+            <Input
+              className="w-28"
+              placeholder="Sensibilidade"
+              value={upperLimbs.palpation.sensitivity}
+              onChange={e =>
+                handleUpperLimbChange("left", "palpation", {
+                  ...upperLimbs.palpation,
+                  sensitivity: e.target.value,
+                })
+              }
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
