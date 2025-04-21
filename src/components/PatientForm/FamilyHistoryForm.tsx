@@ -58,9 +58,6 @@ export function FamilyHistoryForm() {
               onCheckedChange={(v) => handleChange(f.key, v)}
               id={`fh-${f.key}-switch`}
             />
-            <span className="text-sm ml-1">Sim</span>
-            <span className="mx-1 text-sm text-muted-foreground">/</span>
-            <span className="text-sm">Não</span>
             {!!familyHistory[f.key]?.has && (
               <>
                 <Input
@@ -87,3 +84,4 @@ export function FamilyHistoryForm() {
     </FormSection>
   );
 }
+
