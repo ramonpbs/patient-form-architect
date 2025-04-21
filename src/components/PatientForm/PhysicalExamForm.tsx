@@ -13,6 +13,12 @@ import { SistemaDigestorioSection } from "./SistemaDigestorioSection";
 import { SistemaGeniturinarioSection } from "./SistemaGeniturinarioSection";
 import { MembrosSuperioresSection } from "./MembrosSuperioresSection";
 import { MembrosInferioresSection } from "./MembrosInferioresSection";
+import { RespiratoryExamSection } from "./RespiratoryExamSection";
+import { CardiovascularExamSection } from "./CardiovascularExamSection";
+import { DigestiveExamSection } from "./DigestiveExamSection";
+import { GenitourinaryExamSection } from "./GenitourinaryExamSection";
+import { UpperLimbExamSection } from "./UpperLimbExamSection";
+import { LowerLimbExamSection } from "./LowerLimbExamSection";
 
 const conscienciaOptions = [
   "Consciente",
@@ -161,6 +167,49 @@ export function PhysicalExamForm() {
   };
   const handleLymphNodesChange = (key: string, value: any) => {
     handleNeckChange("lymphNodes", { ...headAndNeck.neck.lymphNodes, [key]: value });
+  };
+
+  const handleRespiratoryChange = (field: string, value: any) => {
+    updatePatient("physicalExam", {
+      respiratory: { ...patient.physicalExam.respiratory, [field]: value }
+    });
+  };
+  const handleCardioChange = (field: string, value: any) => {
+    updatePatient("physicalExam", {
+      cardiovascular: { ...patient.physicalExam.cardiovascular, [field]: value }
+    });
+  };
+  const handleDigestiveChange = (field: string, value: any) => {
+    updatePatient("physicalExam", {
+      digestive: { ...patient.physicalExam.digestive, [field]: value }
+    });
+  };
+  const handleGenitourinaryChange = (field: string, value: any) => {
+    updatePatient("physicalExam", {
+      genitourinary: { ...patient.physicalExam.genitourinary, [field]: value }
+    });
+  };
+  const handleUpperLimbChange = (side: "right" | "left", field: string, value: any) => {
+    updatePatient("physicalExam", {
+      limbs: {
+        ...patient.physicalExam.limbs,
+        upperLimbs: {
+          ...patient.physicalExam.limbs.upperLimbs,
+          [field]: value,
+        },
+      }
+    });
+  };
+  const handleLowerLimbChange = (side: "right" | "left", field: string, value: any) => {
+    updatePatient("physicalExam", {
+      limbs: {
+        ...patient.physicalExam.limbs,
+        lowerLimbs: {
+          ...patient.physicalExam.limbs.lowerLimbs,
+          [field]: value,
+        },
+      }
+    });
   };
 
   return (
@@ -780,30 +829,34 @@ export function PhysicalExamForm() {
           handleLymphNodesChange={handleLymphNodesChange}
         />
 
-        <SistemaRespiratorioSection
-          // Passe as props necessárias aqui, exemplo:
-          // respiratorySystem={patient.physicalExam.respiratorySystem}
-          // handleRespiratoryChange={handleRespiratoryChange}
+        <RespiratoryExamSection
+          respiratory={patient.physicalExam.respiratory}
+          handleRespiratoryChange={handleRespiratoryChange}
         />
 
-        <SistemaCardiovascularSection
-          // Props aqui se necessário
+        <CardiovascularExamSection
+          cardiovascular={patient.physicalExam.cardiovascular}
+          handleCardioChange={handleCardioChange}
         />
 
-        <SistemaDigestorioSection
-          // Props se necessário
+        <DigestiveExamSection
+          digestive={patient.physicalExam.digestive}
+          handleDigestiveChange={handleDigestiveChange}
         />
 
-        <SistemaGeniturinarioSection
-          // Props se necessário
+        <GenitourinaryExamSection
+          genitourinary={patient.physicalExam.genitourinary}
+          handleGenitourinaryChange={handleGenitourinaryChange}
         />
 
-        <MembrosSuperioresSection
-          // Props se necessário
+        <UpperLimbExamSection
+          upperLimbs={patient.physicalExam.limbs.upperLimbs}
+          handleUpperLimbChange={handleUpperLimbChange}
         />
 
-        <MembrosInferioresSection
-          // Props se necessário
+        <LowerLimbExamSection
+          lowerLimbs={patient.physicalExam.limbs.lowerLimbs}
+          handleLowerLimbChange={handleLowerLimbChange}
         />
 
       </div>
