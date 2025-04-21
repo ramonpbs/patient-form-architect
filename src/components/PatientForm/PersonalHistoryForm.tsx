@@ -10,17 +10,15 @@ import { Label } from "@/components/ui/label";
 export function PersonalHistoryForm() {
   const { patient, updatePatient } = usePatient();
   const [isOpen, setIsOpen] = useState(true);
-
   const personal = patient.personalHistory;
 
-  const handleField = (field: string, value: any) => {
+  // Funções helper focadas só no necessário da imagem
+  const handleField = (field: keyof typeof personal, value: any) => {
     updatePatient("personalHistory", { [field]: value });
   };
-
-  // For nested/complex structures (chronicDiseases, etc.)
-  const handleNested = (nest: string, field: string, value: any) => {
+  const handleChronicField = (field: keyof typeof personal.chronicDiseases, value: boolean | string) => {
     updatePatient("personalHistory", {
-      [nest]: { ...personal[nest as keyof typeof personal], [field]: value },
+      chronicDiseases: { ...personal.chronicDiseases, [field]: value }
     });
   };
 
@@ -31,78 +29,75 @@ export function PersonalHistoryForm() {
       isOpen={isOpen}
       onToggle={() => setIsOpen(!isOpen)}
     >
-      <form className="space-y-6">
+      <form className="space-y-5">
 
         {/* Doenças crônicas */}
         <div>
-          <Label className="block text-sm mb-2">Doenças crônicas:</Label>
+          <Label className="block font-semibold mb-2">Doenças crônicas:</Label>
           <div className="flex flex-wrap gap-4">
             <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.diabetes} onCheckedChange={v => handleNested('chronicDiseases', 'diabetes', !!v)} />
+              <Checkbox checked={personal.chronicDiseases.diabetes} onCheckedChange={v => handleChronicField("diabetes", !!v)} />
               DM
             </Label>
             <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.hypertension} onCheckedChange={v => handleNested('chronicDiseases', 'hypertension', !!v)} />
+              <Checkbox checked={personal.chronicDiseases.hypertension} onCheckedChange={v => handleChronicField("hypertension", !!v)} />
               HAS
             </Label>
             <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.kidneyFailure} onCheckedChange={v => handleNested('chronicDiseases', 'kidneyFailure', !!v)} />
+              <Checkbox checked={personal.chronicDiseases.kidneyFailure} onCheckedChange={v => handleChronicField("kidneyFailure", !!v)} />
               IRC
             </Label>
             <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.cancer} onCheckedChange={v => handleNested('chronicDiseases', 'cancer', !!v)} />
+              <Checkbox checked={personal.chronicDiseases.cancer} onCheckedChange={v => handleChronicField("cancer", !!v)} />
               Neoplasias
             </Label>
             <Label className="flex items-center gap-2">
-              <Checkbox checked={personal.chronicDiseases.obesity} onCheckedChange={v => handleNested('chronicDiseases', 'obesity', !!v)} />
+              <Checkbox checked={personal.chronicDiseases.obesity} onCheckedChange={v => handleChronicField("obesity", !!v)} />
               Obesidade
             </Label>
           </div>
         </div>
 
         {/* Doenças Respiratórias, Cardiopatias, Outras */}
-        <div>
-          <Label className="block text-sm mb-2">Doenças Respiratórias:</Label>
-          <Label className="flex items-center gap-2 mb-2">
-            <Checkbox checked={personal.chronicDiseases.respiratoryDiseases} onCheckedChange={v => handleNested('chronicDiseases', 'respiratoryDiseases', !!v)} />
-            Sim
+        <div className="grid md:grid-cols-3 gap-3">
+          <div>
+            <Label className="block mb-1">Doenças Respiratórias:</Label>
+            <Checkbox checked={personal.chronicDiseases.respiratoryDiseases} onCheckedChange={v => handleChronicField('respiratoryDiseases', !!v)} />{" "}
             <Input
               placeholder="Quais?"
-              className="ml-2 w-40"
+              className="w-full mt-1"
               value={personal.chronicDiseases.respiratoryDescription}
-              onChange={e => handleNested('chronicDiseases', 'respiratoryDescription', e.target.value)}
+              onChange={e => handleChronicField('respiratoryDescription', e.target.value)}
               disabled={!personal.chronicDiseases.respiratoryDiseases}
             />
-          </Label>
-          <Label className="block text-sm mb-2 mt-2">Cardiopatias:</Label>
-          <Label className="flex items-center gap-2 mb-2">
-            <Checkbox checked={personal.chronicDiseases.heartDiseases} onCheckedChange={v => handleNested('chronicDiseases', 'heartDiseases', !!v)} />
-            Sim
+          </div>
+          <div>
+            <Label className="block mb-1">Cardiopatias:</Label>
+            <Checkbox checked={personal.chronicDiseases.heartDiseases} onCheckedChange={v => handleChronicField('heartDiseases', !!v)} />{" "}
             <Input
               placeholder="Quais?"
-              className="ml-2 w-40"
+              className="w-full mt-1"
               value={personal.chronicDiseases.heartDescription}
-              onChange={e => handleNested('chronicDiseases', 'heartDescription', e.target.value)}
+              onChange={e => handleChronicField('heartDescription', e.target.value)}
               disabled={!personal.chronicDiseases.heartDiseases}
             />
-          </Label>
-          <Label className="block text-sm mb-2 mt-2">Outras:</Label>
-          <Label className="flex items-center gap-2">
-            <Checkbox checked={personal.chronicDiseases.other} onCheckedChange={v => handleNested('chronicDiseases', 'other', !!v)} />
-            Sim
+          </div>
+          <div>
+            <Label className="block mb-1">Outras:</Label>
+            <Checkbox checked={personal.chronicDiseases.other} onCheckedChange={v => handleChronicField('other', !!v)} />{" "}
             <Input
               placeholder="Descreva"
-              className="ml-2 w-40"
+              className="w-full mt-1"
               value={personal.chronicDiseases.otherDescription}
-              onChange={e => handleNested('chronicDiseases', 'otherDescription', e.target.value)}
+              onChange={e => handleChronicField('otherDescription', e.target.value)}
               disabled={!personal.chronicDiseases.other}
             />
-          </Label>
+          </div>
         </div>
 
         {/* Internações anteriores */}
         <div>
-          <Label className="block text-sm mb-2">Internações anteriores:</Label>
+          <Label className="block mb-1">Internações anteriores:</Label>
           <div className="flex items-center gap-4">
             <Label className="flex items-center gap-2">
               <Checkbox checked={!personal.previousHospitalizations} onCheckedChange={v => handleField('previousHospitalizations', !v)} />
@@ -132,7 +127,7 @@ export function PersonalHistoryForm() {
 
         {/* Cirurgias anteriores */}
         <div>
-          <Label className="block text-sm mb-2">Cirurgias Anteriores:</Label>
+          <Label className="block mb-1">Cirurgias anteriores:</Label>
           <div className="flex items-center gap-4">
             <Label className="flex items-center gap-2">
               <Checkbox checked={!personal.previousSurgeries} onCheckedChange={v => handleField('previousSurgeries', !v)} />
@@ -162,7 +157,7 @@ export function PersonalHistoryForm() {
 
         {/* Alergias */}
         <div>
-          <Label className="block text-sm mb-2">Alergias:</Label>
+          <Label className="block mb-1">Alergias:</Label>
           <div className="flex items-center gap-4">
             <Label className="flex items-center gap-2">
               <Checkbox checked={!personal.allergies} onCheckedChange={v => handleField('allergies', !v)} />
@@ -190,32 +185,28 @@ export function PersonalHistoryForm() {
         </div>
 
         {/* Ciclo Menstrual */}
-        <div className="flex flex-col md:flex-row md:items-end gap-4">
+        <div className="flex flex-row gap-6 items-end">
           <div>
-            <Label className="block text-sm">Ciclo Menstrual:</Label>
+            <Label className="block mb-1">Ciclo Menstrual:</Label>
             <div className="flex items-center gap-2">
               <Label className="flex items-center gap-1">
                 <Checkbox
                   checked={personal.menstrualCycle === "Regular"}
-                  onCheckedChange={() =>
-                    handleField("menstrualCycle", "Regular")
-                  }
+                  onCheckedChange={() => handleField("menstrualCycle", "Regular")}
                 />
                 Regular
               </Label>
               <Label className="flex items-center gap-1">
                 <Checkbox
                   checked={personal.menstrualCycle === "Irregular"}
-                  onCheckedChange={() =>
-                    handleField("menstrualCycle", "Irregular")
-                  }
+                  onCheckedChange={() => handleField("menstrualCycle", "Irregular")}
                 />
                 Irregular
               </Label>
             </div>
           </div>
           <div>
-            <Label className="block text-sm">Obs.:</Label>
+            <Label className="block mb-1">Obs.:</Label>
             <Input
               className="w-36"
               placeholder="Observações"
@@ -227,7 +218,7 @@ export function PersonalHistoryForm() {
 
         {/* Uso de medicamentos */}
         <div>
-          <Label className="block text-sm mb-2">Uso de medicamentos:</Label>
+          <Label className="block mb-1">Uso de medicamentos:</Label>
           <div className="flex items-center gap-3 mb-2">
             <Label className="flex items-center gap-2">
               <Checkbox checked={!personal.medicationUse} onCheckedChange={v => handleField('medicationUse', !v)} />
@@ -256,7 +247,7 @@ export function PersonalHistoryForm() {
 
         {/* Esquema vacinal */}
         <div>
-          <Label className="block text-sm mb-2">Esquema vacinal:</Label>
+          <Label className="block mb-1">Esquema vacinal:</Label>
           <div className="flex items-center gap-3">
             <Label className="flex items-center gap-2">
               <Checkbox checked={!personal.vaccineSchedule} onCheckedChange={v => handleField('vaccineSchedule', !v)} />
@@ -266,7 +257,7 @@ export function PersonalHistoryForm() {
               <Checkbox checked={personal.vaccineSchedule} onCheckedChange={v => handleField('vaccineSchedule', !!v)} />
               Sim
             </Label>
-            <Label className="ml-8 flex items-center gap-2">
+            <Label className="ml-6 flex items-center gap-2">
               Adequado para a idade:
               <Checkbox checked={personal.ageAppropriateVaccines} onCheckedChange={v => handleField('ageAppropriateVaccines', !!v)} />
               Sim
@@ -275,10 +266,9 @@ export function PersonalHistoryForm() {
             </Label>
           </div>
         </div>
-
-        {/* Observações */}
+        {/* Observação final */}
         <div>
-          <Label className="block text-sm">Obs.:</Label>
+          <Label className="block">Obs.:</Label>
           <Input
             placeholder="Observações gerais"
             value={personal.observations}

@@ -1,10 +1,14 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { createEmptyPatient, Patient } from '@/models/patient';
 import { useToast } from '@/components/ui/use-toast';
 
 interface PatientContextType {
   patient: Patient;
-  updatePatient: (sectionKey: string, sectionData: any) => void;
+  updatePatient: <K extends keyof Patient>(
+    sectionKey: K,
+    sectionData: Partial<Patient[K]>
+  ) => void;
   savePatient: () => Promise<void>;
   resetForm: () => void;
   loading: boolean;
@@ -20,9 +24,17 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   const [currentSection, setCurrentSection] = useState('identification');
   const { toast } = useToast();
 
-  const updatePatient = (sectionKey: string, sectionData: any) => {
+  const updatePatient = <K extends keyof Patient>(
+    sectionKey: K,
+    sectionData: Partial<Patient[K]>
+  ) => {
     setPatient((prev) => {
-      const newPatient = { ...prev, [sectionKey]: { ...prev[sectionKey as keyof Patient], ...sectionData } };
+      const prevSectionValue = prev[sectionKey];
+      const newSectionValue =
+        typeof prevSectionValue === 'object' && prevSectionValue !== null
+          ? { ...prevSectionValue, ...sectionData }
+          : sectionData;
+      const newPatient = { ...prev, [sectionKey]: newSectionValue };
       newPatient.updatedAt = new Date().toISOString();
       localStorage.setItem('currentPatient', JSON.stringify(newPatient));
       return newPatient;
