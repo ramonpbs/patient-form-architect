@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,10 @@ import {
 import { usePatient } from '@/contexts/PatientContext';
 import { IdentificationForm } from './IdentificationForm';
 import { HabitsForm } from './HabitsForm';
+import { PersonalHistoryForm } from "./PersonalHistoryForm";
+import { FamilyHistoryForm } from "./FamilyHistoryForm";
+import { ChiefComplaintForm } from "./ChiefComplaintForm";
+import { PhysicalExamForm } from "./PhysicalExamForm";
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -102,33 +105,20 @@ export function PatientFormTabs() {
                   <TabsContent value="identification" className="space-y-4 mt-0">
                     <IdentificationForm />
                   </TabsContent>
-                  
                   <TabsContent value="habits" className="space-y-4 mt-0">
                     <HabitsForm />
                   </TabsContent>
-                  
                   <TabsContent value="personalHistory" className="space-y-4 mt-0">
-                    <p className="text-muted-foreground py-8 text-center">
-                      Conteúdo de Antecedentes Pessoais será implementado em breve.
-                    </p>
+                    <PersonalHistoryForm />
                   </TabsContent>
-                  
                   <TabsContent value="familyHistory" className="space-y-4 mt-0">
-                    <p className="text-muted-foreground py-8 text-center">
-                      Conteúdo de Antecedentes Familiares será implementado em breve.
-                    </p>
+                    <FamilyHistoryForm />
                   </TabsContent>
-                  
                   <TabsContent value="chiefComplaint" className="space-y-4 mt-0">
-                    <p className="text-muted-foreground py-8 text-center">
-                      Conteúdo de Queixa Principal será implementado em breve.
-                    </p>
+                    <ChiefComplaintForm />
                   </TabsContent>
-                  
                   <TabsContent value="physicalExam" className="space-y-4 mt-0">
-                    <p className="text-muted-foreground py-8 text-center">
-                      Conteúdo de Exame Físico será implementado em breve.
-                    </p>
+                    <PhysicalExamForm />
                   </TabsContent>
                 </div>
               </Tabs>
