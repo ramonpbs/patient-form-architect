@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import {
   Coffee, 
   HeartPulse, 
   Users, 
-  MessageSquare, 
+  // MessageSquare, // Removido porque não será mais usado
   Stethoscope 
 } from 'lucide-react';
 import { usePatient } from '@/contexts/PatientContext';
@@ -16,7 +17,7 @@ import { IdentificationForm } from './IdentificationForm';
 import { HabitsForm } from './HabitsForm';
 import { PersonalHistoryForm } from "./PersonalHistoryForm";
 import { FamilyHistoryForm } from "./FamilyHistoryForm";
-import { ChiefComplaintForm } from "./ChiefComplaintForm";
+// import { ChiefComplaintForm } from "./ChiefComplaintForm"; // Removido
 import { PhysicalExamForm } from "./PhysicalExamForm";
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
@@ -74,7 +75,7 @@ export function PatientFormTabs() {
             
             <TabsContent value="form">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-7 gap-2">
+                <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 gap-2">
                   <TabsTrigger value="identification" className="flex items-center">
                     <UserRound className="h-4 w-4 mr-1" />
                     <span className="hidden md:inline">Identificação</span>
@@ -91,10 +92,7 @@ export function PatientFormTabs() {
                     <Users className="h-4 w-4 mr-1" />
                     <span className="hidden md:inline">Antecedentes Familiares</span>
                   </TabsTrigger>
-                  <TabsTrigger value="chiefComplaint" className="flex items-center">
-                    <MessageSquare className="h-4 w-4 mr-1" />
-                    <span className="hidden md:inline">Queixa Principal</span>
-                  </TabsTrigger>
+                  {/* Removido a trigger/aba de Queixa Principal */}
                   <TabsTrigger value="physicalExam" className="flex items-center">
                     <Stethoscope className="h-4 w-4 mr-1" />
                     <span className="hidden md:inline">Exame Físico</span>
@@ -114,9 +112,7 @@ export function PatientFormTabs() {
                   <TabsContent value="familyHistory" className="space-y-4 mt-0">
                     <FamilyHistoryForm />
                   </TabsContent>
-                  <TabsContent value="chiefComplaint" className="space-y-4 mt-0">
-                    <ChiefComplaintForm />
-                  </TabsContent>
+                  {/* Removido o componente ChiefComplaintForm */}
                   <TabsContent value="physicalExam" className="space-y-4 mt-0">
                     <PhysicalExamForm />
                   </TabsContent>
@@ -137,3 +133,4 @@ export function PatientFormTabs() {
     </div>
   );
 }
+
